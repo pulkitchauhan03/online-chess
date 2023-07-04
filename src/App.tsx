@@ -15,7 +15,7 @@ const socket = io(import.meta.env.VITE_SOCKET_URL as string, {
 const router = createBrowserRouter([
   ...createRoutesFromElements(
     <Route path="/" >
-      <Route path="match" element={<RequireAuth />} >
+      <Route path="/" element={<RequireAuth />} >
         <Route index element={<Home socket={socket} />} />
       </Route>
       <Route path="/auth" >

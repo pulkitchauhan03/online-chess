@@ -1,14 +1,30 @@
 import { useState } from 'react'
+import { signUp } from '../../api'
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         username: '',
         name: '',
         password: ''
     });
 
-    const handleSubmit = () => {
-        console.log(form);
+    const handleSubmit = async () => {
+        await signUp(form).then((response) => {
+            if (response.status === 201) {
+                return response.data;
+            } else {
+                alert("Wrong Credentials!");
+                throw new Error("Wrong Credentials!");
+            }
+        }).then((data) => {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("username", data.username);
+            navigate("/");
+        }).catch((error) => {
+            alert(error.message);
+        });
     }
 
     const handleChange = (event: any) => {

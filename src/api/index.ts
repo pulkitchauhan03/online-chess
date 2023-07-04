@@ -12,5 +12,7 @@ API.interceptors.request.use((req) => {
     return req;
 });
 
+export const createMatch = () => API.get('/match/create');
+
 export const logIn = (formData: login) => API.post('/auth/login', formData);
 export const signUp = (formData: signup) => API.post('/auth/signup', formData);

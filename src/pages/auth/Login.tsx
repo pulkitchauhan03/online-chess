@@ -21,7 +21,7 @@ export default function Login() {
         }).then((data) => {
             localStorage.setItem("token", data.token);
             localStorage.setItem("username", data.username);
-            navigate("/match");
+            navigate("/");
         }).catch((error) => {
             alert(error.message);
         });

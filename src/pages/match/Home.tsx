@@ -18,6 +18,8 @@ export default function Home(props: {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setBoard(defaultBoard);
+    setSide(BoardSide.WHITE);
     socket.on("connect", async () => {
       // console.log("Connected to server");
       if (matchId) {

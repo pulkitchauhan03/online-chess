@@ -13,6 +13,7 @@ export default function Board({
   side: BoardSide;
 }) {
   console.log(status);
+  console.log(side);
   const handleClick = (event: unknown) => {
     console.log(event);
     handleMove({ side: BoardSide.WHITE, finalPosition: "be3" } as Move);
@@ -28,12 +29,11 @@ export default function Board({
       );
     }
   };
-  
 
   return (
     <div>
       <div className="grid grid-cols-8 gap-0 aspect-square max-w-3xl">
-        {board.reverse().map((row, rowIndex) => {
+        {board.map((row, rowIndex) => {
           return row.map((cell, cellIndex) => {
             return (
               <div

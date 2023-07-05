@@ -3,23 +3,34 @@ import { createMatch } from "../../api";
 import Board from "../../components/Board";
 import { MatchStatus, Move } from "../../types/match";
 import { useNavigate } from "react-router-dom";
+import { joinMatch } from "../../api";
 
 export default function Home(props: {socket: any, matchId: string | null, matchStatus: MatchStatus, setMatchStatus: (matchStatus: MatchStatus) => void}) {
   const { socket, matchId, matchStatus, setMatchStatus } = props;
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("connect", () => {
+    socket.on("connect", async () => {
       // console.log("Connected to server");
       if (matchId) {
-        socket.emit("join", matchId);
+        try {
+          const response = await joinMatch(matchId);
+          if (response.status === 200) {
+            setMatchStatus(response.data.matchStatus);
+            socket.emit("join", matchId);
+          } else {
+            throw new Error(response.data.message);
+          }
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
 
     socket.on("user_joined", (data: any) => {
       console.log("User joined "), data.userId;
       setMatchStatus(MatchStatus.IN_PROGRESS);
-    })
+    });
 
     socket.on("user_left", (data: any) => {
       console.log("User left"), data.userId;
@@ -48,7 +59,7 @@ export default function Home(props: {socket: any, matchId: string | null, matchS
   }
 
   const handleMove = (move: Move) => {
-    console.log(move);
+    socket.emit("move", {move, matchId});
   }
 
   return (

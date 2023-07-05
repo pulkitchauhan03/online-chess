@@ -13,6 +13,7 @@ API.interceptors.request.use((req) => {
 });
 
 export const createMatch = () => API.get('/match/create');
+export const joinMatch = (matchId: string) => API.get(`/match/join/${matchId}`);
 
 export const logIn = (formData: login) => API.post('/auth/login', formData);
 export const signUp = (formData: signup) => API.post('/auth/signup', formData);

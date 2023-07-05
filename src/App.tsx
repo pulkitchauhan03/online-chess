@@ -1,9 +1,9 @@
 import './App.css'
 import Login from './pages/auth/Login'
 import Signup from './pages/auth/Signup'
-import VerifyMatch from './components/VerifyMatch';
-import NotFound from './components/NotFound';
-import RequireAuth from './components/RequireAuth';
+import VerifyMatch from './middlewares/VerifyMatch';
+import NotFound from './pages/not-found/NotFound';
+import RequireAuth from './middlewares/RequireAuth';
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import { io, Socket } from "socket.io-client";
 

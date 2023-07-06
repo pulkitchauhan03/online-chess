@@ -13,13 +13,11 @@ export default function Home(props: {
   setMatchStatus: (matchStatus: MatchStatus) => void;
 }) {
   const { socket, matchId, matchStatus, setMatchStatus } = props;
-  const [ board, setBoard ] = useState<string[][]>(defaultBoard);
-  const [ side, setSide ] = useState<BoardSide>(BoardSide.WHITE);
+  const [board /*, setBoard*/] = useState<string[][]>(defaultBoard);
+  const [side /*, setSide*/] = useState<BoardSide>(BoardSide.WHITE);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setBoard(defaultBoard);
-    setSide(BoardSide.WHITE);
     socket.on("connect", async () => {
       // console.log("Connected to server");
       if (matchId) {
@@ -76,8 +74,17 @@ export default function Home(props: {
 
   return (
     <div>
-      <button onClick={handleCreate}>Create a Match</button>
-      <Board board={board} side={side} status={matchStatus} handleMove={handleMove} />
+      <div className="flex flex-col h-screen xl:flex-row w-full">
+        <div className="xl:flex-row w-full flex align-center">
+          <Board
+            board={board}
+            side={side}
+            status={matchStatus}
+            handleMove={handleMove}
+          />
+        </div>
+        <div className="w-full xl:w-1/2 min-w-[160px] bg-red-400">Board</div>
+      </div>
     </div>
   );
 }

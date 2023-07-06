@@ -1,5 +1,8 @@
 import { MatchStatus, Move, BoardSide } from "../types/match";
 import { pieceDict } from "../assets/pieceAsset";
+import { renderToStaticMarkup } from "react-dom/server";
+import { useState, useEffect } from "react";
+import { getMoves, getMoveName } from "../engine/chess";
 
 export default function Board({
   status,
@@ -12,45 +15,163 @@ export default function Board({
   board: string[][];
   side: BoardSide;
 }) {
-  console.log(status);
-  console.log(side);
-  const handleClick = (event: unknown) => {
-    console.log(event);
-    handleMove({ side: BoardSide.WHITE, finalPosition: "be3" } as Move);
+  const [selectedTile, setSelectedTile] = useState<number[] | null>([2, 3]);
+  const [highlightedTiles, setHighlightedTiles] = useState<
+    { pos: number[]; type: string }[]
+  >([
+    {
+      pos: [0, 0],
+      type: "move",
+    },
+    {
+      pos: [0, 1],
+      type: "kill",
+    },
+  ]);
+
+  useEffect(() => {
+    if (highlightedTiles.length > 0) {
+      highlightedTiles.map((tile: { pos: number[]; type: string }) => {
+        const element = document.getElementById(
+          `tile-(${tile.pos[0]},${tile.pos[1]})`
+        );
+        if (element !== null)
+          element.innerHTML += renderToStaticMarkup(
+            <div
+              id={`tile-(${tile.pos[0]},${tile.pos[1]})`}
+              className={`absolute w-full h-full outline outline-offset-[-15px] outline-[7px] opacity-20 `}
+            ></div>
+          );
+      });
+    }
+  }, [highlightedTiles]);
+
+  useEffect(() => {
+    if (selectedTile !== null) {
+      const element = document.getElementById(
+        `tile-(${selectedTile[0]},${selectedTile[1]})`
+      );
+      if (element !== null)
+        element.innerHTML += renderToStaticMarkup(
+          <div
+            id={`tile-(${selectedTile[0]},${selectedTile[1]})`}
+            className={`absolute w-full h-full outline outline-offset-[-15px] outline-[7px] outline-red-900 opacity-20 `}
+          ></div>
+        );
+    }
+  }, [selectedTile]);
+
+  const getTileStatus = (row: number, col: number) => {
+    const tile = highlightedTiles.find(
+      (tile: { pos: number[]; type: string }) =>
+        tile.pos[0] === row && tile.pos[1] === col
+    );
+    if (tile === undefined) {
+      if (
+        selectedTile !== null &&
+        selectedTile[0] === row &&
+        selectedTile[1] === col
+      )
+        return "selected";
+      else return "";
+    } else return tile.type;
   };
 
-  const renderCell = (cell: string) => {
-    if (cell === "--") return <></>;
-    else {
+  const customSetHighlightedTiles = (moves: any) => {
+    setHighlightedTiles((value) => {
+      if (value.length > 0) {
+        value.map((tile: { pos: number[]; type: string }) => {
+          const element = document.getElementById(
+            `tile-(${tile.pos[0]},${tile.pos[1]})`
+          );
+          if (element !== null)
+            element.innerHTML = renderToStaticMarkup(
+              renderCell(tile.pos[0], tile.pos[1])
+            );
+        });
+      }
+      return moves;
+    });
+  };
+
+  const customSetSelectedTile = (tile: number[] | null) => {
+    setSelectedTile((value) => {
+      if (value !== null) {
+        const element = document.getElementById(
+          `tile-(${value[0]},${value[1]})`
+        );
+        if (element !== null)
+          element.innerHTML = renderToStaticMarkup(
+            renderCell(value[0], value[1])
+          );
+      }
+      return tile;
+    });
+  };
+
+  const handleClick = (event: any) => {
+    const row = parseInt(event.target.id.split("(")[1].split(",")[0]);
+    const col = parseInt(event.target.id.split(",")[1].split(")")[0]);
+
+    const tileStatus = getTileStatus(row, col);
+
+    if (tileStatus === "") {
+      customSetSelectedTile([row, col]);
+      const moves = getMoves(board, [row, col], side);
+      console.log({ moves });
+      customSetHighlightedTiles(moves);
+    } else if (tileStatus === "selected") {
+      customSetSelectedTile(null);
+      customSetHighlightedTiles([]);
+    } else {
+      const move = {
+        side: side,
+        finalPosition: getMoveName(selectedTile, [row, col], board, side),
+      } as Move;
+      console.log({ move });
+      customSetSelectedTile(null);
+      customSetHighlightedTiles([]);
+      handleMove(move);
+    }
+  };
+
+  const renderCell = (row: number, col: number) => {
+    const cell = board[row][col];
+    if (cell === "") {
+      return <></>;
+    } else {
       return (
-        <div className="w-full h-full">
-          <img src={pieceDict[cell]} className="w-full h-full" />
-        </div>
+        <img
+          draggable="false"
+          id={`tile-(${row},${col})`}
+          src={pieceDict[cell]}
+          className="w-full h-full absolute"
+        />
       );
     }
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-8 gap-0 aspect-square max-w-3xl">
-        {board.map((row, rowIndex) => {
-          return row.map((cell, cellIndex) => {
+    <div className="w-full flex justify-center items-center select-none">
+      <div className="grid grid-cols-8 gap-0 aspect-square max-h-[48rem] max-w-3xl w-full">
+        {board.map((row: string[], rowIndex: number) => {
+          return row.map((cell: string, cellIndex: number) => {
             return (
               <div
+                id={`tile-(${rowIndex},${cellIndex})`}
+                onClick={handleClick}
                 key={cellIndex}
-                className={`flex justify-center items-center w-full aspect-square 
-                ${
-                  (rowIndex + cellIndex) % 2 === 0 ? "bg-white" : "bg-gray-600"
-                }`}
+                className={`${cell} flex justify-center items-center w-full aspect-square relative 
+              ${(rowIndex + cellIndex) % 2 === 0 ? "bg-white" : "bg-gray-600"}`}
               >
-                {renderCell(cell)}
+                {renderCell(rowIndex, cellIndex)}
               </div>
             );
           });
         })}
       </div>
-      Board
-      <button onClick={handleClick}>click me</button>
     </div>
   );
+
+  console.log({ status });
 }

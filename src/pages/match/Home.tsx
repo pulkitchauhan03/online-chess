@@ -83,7 +83,10 @@ export default function Home(props: {
             handleMove={handleMove}
           />
         </div>
-        <div className="w-full xl:w-1/2 min-w-[160px] bg-red-400">Board</div>
+        <div className="w-full xl:w-1/2 min-w-[160px] bg-red-400">
+          Board
+          <button onClick={handleCreate}></button>
+        </div>
       </div>
     </div>
   );

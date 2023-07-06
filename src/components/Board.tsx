@@ -3,6 +3,7 @@ import { pieceDict } from "../assets/pieceAsset";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useState, useEffect } from "react";
 import { getMoves, getMoveName } from "../engine/chess";
+import { defaultBoard } from "../defaults/board";
 
 export default function Board({
   status,
@@ -15,19 +16,10 @@ export default function Board({
   board: string[][];
   side: BoardSide;
 }) {
-  const [selectedTile, setSelectedTile] = useState<number[] | null>([2, 3]);
+  const [selectedTile, setSelectedTile] = useState<number[] | null>(null);
   const [highlightedTiles, setHighlightedTiles] = useState<
     { pos: number[]; type: string }[]
-  >([
-    {
-      pos: [0, 0],
-      type: "move",
-    },
-    {
-      pos: [0, 1],
-      type: "kill",
-    },
-  ]);
+  >([]);
 
   useEffect(() => {
     if (highlightedTiles.length > 0) {
@@ -116,10 +108,14 @@ export default function Board({
     const tileStatus = getTileStatus(row, col);
 
     if (tileStatus === "") {
-      customSetSelectedTile([row, col]);
-      const moves = getMoves(board, [row, col], side);
-      console.log({ moves });
-      customSetHighlightedTiles(moves);
+      if (board[row][col][0] !== side[0]) {
+        customSetSelectedTile(null);
+        customSetHighlightedTiles([]);
+      } else {
+        customSetSelectedTile([row, col]);
+        const moves = getMoves(board, [row, col], side);
+        customSetHighlightedTiles(moves);
+      }
     } else if (tileStatus === "selected") {
       customSetSelectedTile(null);
       customSetHighlightedTiles([]);
@@ -154,17 +150,29 @@ export default function Board({
   return (
     <div className="w-full flex justify-center items-center select-none">
       <div className="grid grid-cols-8 gap-0 aspect-square max-h-[48rem] max-w-3xl w-full">
-        {board.map((row: string[], rowIndex: number) => {
+        {defaultBoard.map((row: string[], rowIndex: number) => {
           return row.map((cell: string, cellIndex: number) => {
+            const row = side === BoardSide.WHITE ? rowIndex : 7 - rowIndex;
+            const col = side === BoardSide.WHITE ? cellIndex : 7 - cellIndex;
             return (
               <div
-                id={`tile-(${rowIndex},${cellIndex})`}
+                id={`tile-(${row},${col})`}
                 onClick={handleClick}
-                key={cellIndex}
+                key={col}
                 className={`${cell} flex justify-center items-center w-full aspect-square relative 
-              ${(rowIndex + cellIndex) % 2 === 0 ? "bg-white" : "bg-gray-600"}`}
+              ${(row + col) % 2 === 0 ? "bg-white" : "bg-gray-600"}`}
               >
-                {renderCell(rowIndex, cellIndex)}
+                {renderCell(row, col)}
+                {/* {rowIndex === 7 && (
+                  <div className="w-8 h-8 pointer-events-none absolute z-10">
+                    {String.fromCharCode(97 + rowIndex)}
+                  </div>
+                )}
+                {cellIndex === 0 && (
+                  <div className="w-8 h-8 pointer-events-none absolute z-10">
+                    {8 - col}
+                  </div>
+                )} */}
               </div>
             );
           });

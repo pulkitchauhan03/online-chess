@@ -14,7 +14,7 @@ export default function Home(props: {
 }) {
   const { socket, matchId, matchStatus, setMatchStatus } = props;
   const [board /*, setBoard*/] = useState<string[][]>(defaultBoard);
-  const [side /*, setSide*/] = useState<BoardSide>(BoardSide.WHITE);
+  const [side /*, setSide*/] = useState<BoardSide>(BoardSide.BLACK);
   const navigate = useNavigate();
 
   useEffect(() => {

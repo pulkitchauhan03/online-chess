@@ -115,29 +115,56 @@ export const getMoves = (board, position, side) => {
 
     const moves = [];
 
+    console.log({position})
+
     if (piece === "P") {
-        console.log(position)
         if (side === BoardSide.WHITE) {
-            if (checkBounds([r-1, c+1]) && board[r-1][c+1][0] === "b") {
+            if (checkBounds([r - 1, c + 1]) && board[r - 1][c + 1][0] === "b") {
                 moves.push({
-                    pos: [r-1, c+1],
+                    pos: [r - 1, c + 1],
                     type: "kill",
                 });
             }
-            if (checkBounds([r-1, c-1]) && board[r-1][c-1][0] === "b") {
+            if (checkBounds([r - 1, c - 1]) && board[r - 1][c - 1][0] === "b") {
                 moves.push({
-                    pos: [r-1, c-1],
+                    pos: [r - 1, c - 1],
                     type: "kill",
                 });
             }
-            if (checkBounds([r-1, c]) && board[r-1][c] === "") {
+            if (checkBounds([r - 1, c]) && board[r - 1][c] === "") {
                 moves.push({
-                    pos: [r-1, c],
+                    pos: [r - 1, c],
                     type: "move",
                 });
-                if (r === 6 && checkBounds([r-2, c]) && board[r-2][c] === "") {
+                if (r === 6 && checkBounds([r - 2, c]) && board[r - 2][c] === "") {
                     moves.push({
-                        pos: [r-2, c],
+                        pos: [r - 2, c],
+                        type: "move",
+                    });
+                }
+            }
+        }
+        if (side === BoardSide.BLACK) {
+            if (checkBounds([r + 1, c + 1]) && board[r + 1][c + 1][0] === "w") {
+                moves.push({
+                    pos: [r + 1, c + 1],
+                    type: "kill",
+                });
+            }
+            if (checkBounds([r + 1, c - 1]) && board[r + 1][c - 1][0] === "w") {
+                moves.push({
+                    pos: [r + 1, c - 1],
+                    type: "kill",
+                });
+            }
+            if (checkBounds([r + 1, c]) && board[r + 1][c] === "") {
+                moves.push({
+                    pos: [r + 1, c],
+                    type: "move",
+                });
+                if (r === 1 && checkBounds([r + 2, c]) && board[r + 2][c] === "") {
+                    moves.push({
+                        pos: [r + 2, c],
                         type: "move",
                     });
                 }
@@ -145,6 +172,534 @@ export const getMoves = (board, position, side) => {
         }
     }
 
-    return moves;
+    if (piece === "R") {
+        var i: number;
+        for (i=r+1; i<8; i++) {
+            if (board[i][c] === "") {
+                moves.push({
+                    pos: [i, c],
+                    type: "move",
+                });
+            } else if (board[i][c][0] !== side[0]) {
+                moves.push({
+                    pos: [i, c],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=r-1; i>=0; i--) {
+            if (board[i][c] === "") {
+                moves.push({
+                    pos: [i, c],
+                    type: "move",
+                });
+            } else if (board[i][c][0] !== side[0]) {
+                moves.push({
+                    pos: [i, c],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=c+1; i<8; i++) {
+            if (board[r][i] === "") {
+                moves.push({
+                    pos: [r, i],
+                    type: "move",
+                });
+            } else if (board[r][i][0] !== side[0]) {
+                moves.push({
+                    pos: [r, i],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=c-1; i>=0; i--) {
+            if (board[r][i] === "") {
+                moves.push({
+                    pos: [r, i],
+                    type: "move",
+                });
+            } else if (board[r][i][0] !== side[0]) {
+                moves.push({
+                    pos: [r, i],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+    }
 
+    if (piece === "B") {
+        var i: number;
+        for (i=1; i<8; i++) {
+            if (checkBounds([r+i, c+i])) {
+                if (board[r+i][c+i] === "") {
+                    moves.push({
+                        pos: [r+i, c+i],
+                        type: "move",
+                    });
+                } else if (board[r+i][c+i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r+i, c+i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r-i, c-i])) {
+                if (board[r-i][c-i] === "") {
+                    moves.push({
+                        pos: [r-i, c-i],
+                        type: "move",
+                    });
+                } else if (board[r-i][c-i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r-i, c-i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r+i, c-i])) {
+                if (board[r+i][c-i] === "") {
+                    moves.push({
+                        pos: [r+i, c-i],
+                        type: "move",
+                    });
+                } else if (board[r+i][c-i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r+i, c-i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r-i, c+i])) {
+                if (board[r-i][c+i] === "") {
+                    moves.push({
+                        pos: [r-i, c+i],
+                        type: "move",
+                    });
+                } else if (board[r-i][c+i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r-i, c+i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (piece === "Q") {
+        var i: number;
+        for (i=r+1; i<8; i++) {
+            if (board[i][c] === "") {
+                moves.push({
+                    pos: [i, c],
+                    type: "move",
+                });
+            } else if (board[i][c][0] !== side[0]) {
+                moves.push({
+                    pos: [i, c],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=r-1; i>=0; i--) {
+            if (board[i][c] === "") {
+                moves.push({
+                    pos: [i, c],
+                    type: "move",
+                });
+            } else if (board[i][c][0] !== side[0]) {
+                moves.push({
+                    pos: [i, c],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=c+1; i<8; i++) {
+            if (board[r][i] === "") {
+                moves.push({
+                    pos: [r, i],
+                    type: "move",
+                });
+            } else if (board[r][i][0] !== side[0]) {
+                moves.push({
+                    pos: [r, i],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=c-1; i>=0; i--) {
+            if (board[r][i] === "") {
+                moves.push({
+                    pos: [r, i],
+                    type: "move",
+                });
+            } else if (board[r][i][0] !== side[0]) {
+                moves.push({
+                    pos: [r, i],
+                    type: "kill",
+                });
+                break;
+            } else {
+                break;
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r+i, c+i])) {
+                if (board[r+i][c+i] === "") {
+                    moves.push({
+                        pos: [r+i, c+i],
+                        type: "move",
+                    });
+                } else if (board[r+i][c+i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r+i, c+i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r-i, c-i])) {
+                if (board[r-i][c-i] === "") {
+                    moves.push({
+                        pos: [r-i, c-i],
+                        type: "move",
+                    });
+                } else if (board[r-i][c-i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r-i, c-i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r+i, c-i])) {
+                if (board[r+i][c-i] === "") {
+                    moves.push({
+                        pos: [r+i, c-i],
+                        type: "move",
+                    });
+                } else if (board[r+i][c-i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r+i, c-i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (i=1; i<8; i++) {
+            if (checkBounds([r-i, c+i])) {
+                if (board[r-i][c+i] === "") {
+                    moves.push({
+                        pos: [r-i, c+i],
+                        type: "move",
+                    });
+                } else if (board[r-i][c+i][0] !== side[0]) {
+                    moves.push({
+                        pos: [r-i, c+i],
+                        type: "kill",
+                    });
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (piece === "K") {
+        if (checkBounds([r+1, c+1])) {
+            if (board[r+1][c+1] === "") {
+                moves.push({
+                    pos: [r+1, c+1],
+                    type: "move",
+                });
+            } else if (board[r+1][c+1][0] !== side[0]) {
+                moves.push({
+                    pos: [r+1, c+1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r+1, c])) {
+            if (board[r+1][c] === "") {
+                moves.push({
+                    pos: [r+1, c],
+                    type: "move",
+                });
+            } else if (board[r+1][c][0] !== side[0]) {
+                moves.push({
+                    pos: [r+1, c],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r+1, c-1])) {
+            if (board[r+1][c-1] === "") {
+                moves.push({
+                    pos: [r+1, c-1],
+                    type: "move",
+                });
+            } else if (board[r+1][c-1][0] !== side[0]) {
+                moves.push({
+                    pos: [r+1, c-1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r, c+1])) {
+            if (board[r][c+1] === "") {
+                moves.push({
+                    pos: [r, c+1],
+                    type: "move",
+                });
+            } else if (board[r][c+1][0] !== side[0]) {
+                moves.push({
+                    pos: [r, c+1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r, c-1])) {
+            if (board[r][c-1] === "") {
+                moves.push({
+                    pos: [r, c-1],
+                    type: "move",
+                });
+            } else if (board[r][c-1][0] !== side[0]) {
+                moves.push({
+                    pos: [r, c-1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-1, c+1])) {
+            if (board[r-1][c+1] === "") {
+                moves.push({
+                    pos: [r-1, c+1],
+                    type: "move",
+                });
+            } else if (board[r-1][c+1][0] !== side[0]) {
+                moves.push({
+                    pos: [r-1, c+1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-1, c])) {
+            if (board[r-1][c] === "") {
+                moves.push({
+                    pos: [r-1, c],
+                    type: "move",
+                });
+            } else if (board[r-1][c][0] !== side[0]) {
+                moves.push({
+                    pos: [r-1, c],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-1, c-1])) {
+            if (board[r-1][c-1] === "") {
+                moves.push({
+                    pos: [r-1, c-1],
+                    type: "move",
+                });
+            } else if (board[r-1][c-1][0] !== side[0]) {
+                moves.push({
+                    pos: [r-1, c-1],
+                    type: "kill",
+                });
+            }
+        }
+    
+        // Castling
+        if (side === BoardSide.WHITE && position[0] === 7 && position[1] === 4) {
+            if (board[7][5] === "" && board[7][6] === "" && board[7][7] === "wR") {
+                moves.push({
+                    pos: [7, 6],
+                    type: "move",
+                });
+            }
+            if (board[7][3] === "" && board[7][2] === "" && board[7][1] === "" && board[7][0] === "wR") {
+                moves.push({
+                    pos: [7, 2],
+                    type: "move",
+                });
+            }
+        }
+        if (side === BoardSide.BLACK && position[0] === 0 && position[1] === 4) {
+            if (board[0][5] === "" && board[0][6] === "" && board[0][7] === "bR") {
+                moves.push({
+                    pos: [0, 6],
+                    type: "move",
+                });
+            }
+            if (board[0][3] === "" && board[0][2] === "" && board[0][1] === "" && board[0][0] === "bR") {
+                moves.push({
+                    pos: [0, 2],
+                    type: "move",
+                });
+            }
+        }
+    }
+
+    if (piece === "N") {
+        if (checkBounds([r+2, c+1])) {
+            if (board[r+2][c+1] === "") {   
+                moves.push({
+                    pos: [r+2, c+1],
+                    type: "move",
+                });
+            } else if (board[r+2][c+1][0] !== side[0]) {
+                moves.push({
+                    pos: [r+2, c+1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r+2, c-1])) {
+            if (board[r+2][c-1] === "") {
+                moves.push({
+                    pos: [r+2, c-1],
+                    type: "move",
+                });
+            } else if (board[r+2][c-1][0] !== side[0]) {
+                moves.push({
+                    pos: [r+2, c-1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-2, c+1])) {
+            if (board[r-2][c+1] === "") {
+                moves.push({
+                    pos: [r-2, c+1],
+                    type: "move",
+                });
+            } else if (board[r-2][c+1][0] !== side[0]) {
+                moves.push({
+                    pos: [r-2, c+1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-2, c-1])) {
+            if (board[r-2][c-1] === "") {
+                moves.push({
+                    pos: [r-2, c-1],
+                    type: "move",
+                });
+            } else if (board[r-2][c-1][0] !== side[0]) {
+                moves.push({
+                    pos: [r-2, c-1],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r+1, c+2])) {
+            if (board[r+1][c+2] === "") {
+                moves.push({
+                    pos: [r+1, c+2],
+                    type: "move",
+                });
+            } else if (board[r+1][c+2][0] !== side[0]) {
+                moves.push({
+                    pos: [r+1, c+2],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r+1, c-2])) {
+            if (board[r+1][c-2] === "") {
+                moves.push({
+                    pos: [r+1, c-2],
+                    type: "move",
+                });
+            } else if (board[r+1][c-2][0] !== side[0]) {
+                moves.push({
+                    pos: [r+1, c-2],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-1, c+2])) {
+            if (board[r-1][c+2] === "") {
+                moves.push({
+                    pos: [r-1, c+2],
+                    type: "move",
+                });
+            } else if (board[r-1][c+2][0] !== side[0]) {
+                moves.push({
+                    pos: [r-1, c+2],
+                    type: "kill",
+                });
+            }
+        }
+        if (checkBounds([r-1, c-2])) {
+            if (board[r-1][c-2] === "") {
+                moves.push({
+                    pos: [r-1, c-2],
+                    type: "move",
+                });
+            } else if (board[r-1][c-2][0] !== side[0]) {
+                moves.push({
+                    pos: [r-1, c-2],
+                    type: "kill",
+                });
+            }
+        }
+    }
+
+    console.log({ moves });
+    return moves;
 };

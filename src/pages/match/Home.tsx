@@ -10,16 +10,17 @@ export default function Home(props: {
   socket: any;
   matchId: string | null;
   matchStatus: MatchStatus;
+  setMatchId: (matchId: string) => void;
   setMatchStatus: (matchStatus: MatchStatus) => void;
 }) {
-  const { socket, matchId, matchStatus, setMatchStatus } = props;
+  const { socket, matchId, matchStatus, setMatchId, setMatchStatus } = props;
   const [board /*, setBoard*/] = useState<string[][]>(defaultBoard);
   const [side /*, setSide*/] = useState<BoardSide>(BoardSide.BLACK);
   const navigate = useNavigate();
 
   useEffect(() => {
     socket.on("connect", async () => {
-      // console.log("Connected to server");
+      console.log("Connected to server");
       if (matchId) {
         try {
           const response = await joinMatch(matchId);
@@ -58,6 +59,7 @@ export default function Home(props: {
           // setMatchStatus(MatchStatus.WAITING);
           // socket.emit("join", response.data.matchId);
           console.log(response.data);
+          setMatchId(response.data.matchId);
           navigate(`/?id=${response.data.matchId}`);
         } else {
           console.log("Error creating match");
@@ -85,7 +87,7 @@ export default function Home(props: {
         </div>
         <div className="w-full xl:w-1/2 min-w-[160px] bg-red-400">
           Board
-          <button onClick={handleCreate}></button>
+          <button onClick={handleCreate}>create</button>
         </div>
       </div>
     </div>

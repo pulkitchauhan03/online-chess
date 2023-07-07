@@ -170,6 +170,36 @@ export const getMoves = (board, position, side) => {
                 }
             }
         }
+
+        //en passant
+        if (side === BoardSide.WHITE && r === 3) {
+            if (checkBounds([r, c + 1]) && board[r][c + 1] === "bP") {
+                moves.push({
+                    pos: [r - 1, c + 1],
+                    type: "enpassant",
+                });
+            }
+            if (checkBounds([r, c - 1]) && board[r][c - 1] === "bP") {
+                moves.push({
+                    pos: [r - 1, c - 1],
+                    type: "enpassant",
+                });
+            }
+        }
+        if (side === BoardSide.BLACK && r === 4) {
+            if (checkBounds([r, c + 1]) && board[r][c + 1] === "wP") {
+                moves.push({
+                    pos: [r + 1, c + 1],
+                    type: "enpassant",
+                });
+            }
+            if (checkBounds([r, c - 1]) && board[r][c - 1] === "wP") {
+                moves.push({
+                    pos: [r + 1, c - 1],
+                    type: "enpassant",
+                });
+            }
+        }
     }
 
     if (piece === "R") {

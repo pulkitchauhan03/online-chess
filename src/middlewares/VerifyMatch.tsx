@@ -18,6 +18,6 @@ export default function VerifyMatch({socket}: {socket: any}) {
     }, [query]);
 
     return (
-        <Home socket={socket} matchId={matchId} matchStatus={matchStatus} setMatchStatus={setMatchStatus}></Home>
+        <Home socket={socket} matchId={matchId} setMatchId={setMatchId} matchStatus={matchStatus} setMatchStatus={setMatchStatus}></Home>
     )
 }

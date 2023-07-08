@@ -14,7 +14,7 @@ export default function Home(props: {
   setMatchStatus: (matchStatus: MatchStatus) => void;
 }) {
   const { socket, matchId, matchStatus, setMatchId, setMatchStatus } = props;
-  const [board /*, setBoard*/] = useState<string[][]>(defaultBoard);
+  const [board, setBoard] = useState<string[][]>(defaultBoard);
   const [side /*, setSide*/] = useState<BoardSide>(BoardSide.BLACK);
   const navigate = useNavigate();
 
@@ -35,6 +35,9 @@ export default function Home(props: {
         }
       }
     });
+  });
+
+  useEffect(() => {
 
     socket.on("user_joined", (data: any) => {
       console.log("User joined "), data.userId;
@@ -48,8 +51,16 @@ export default function Home(props: {
 
     socket.on("move", (data: any) => {
       console.log("Move", data);
+      const from = data.initialPosition;
+      const to = data.finalPosition;
+      setBoard((value) => {
+        const temp = JSON.parse(JSON.stringify(value));
+        temp[to[0]][to[1]] = temp[from[0]][from[1]];
+        temp[from[0]][from[1]] = "";
+        return temp;
+      })
     });
-  }, [socket, matchId, setMatchStatus]);
+  }, [socket, setMatchStatus, setBoard]);
 
   const handleCreate = async () => {
     createMatch()
@@ -72,6 +83,14 @@ export default function Home(props: {
 
   const handleMove = (move: Move) => {
     socket.emit("move", { move, matchId });
+    // const from = move.initialPosition;
+    // const to = move.finalPosition;
+    // setBoard((value) => {
+    //   const temp = JSON.parse(JSON.stringify(value));
+    //   temp[to[0]][to[1]] = temp[from[0]][from[1]];
+    //   temp[from[0]][from[1]] = "";
+    //   return temp;
+    // })
   };
 
   return (

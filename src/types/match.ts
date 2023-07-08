@@ -12,6 +12,15 @@ export enum BoardSide {
 }
 
 export interface Move {
-    finalPosition: string;
+    name: string;
+    initialPosition: [number, number];
+    finalPosition: [number, number];
     side: BoardSide;
+}
+
+export enum TileStatus {
+    SELECTED = "selected",
+    MOVE = "move",
+    CAPTURE = "capture",
+    NONE = "none",
 }

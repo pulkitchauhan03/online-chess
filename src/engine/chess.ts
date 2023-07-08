@@ -1,4 +1,5 @@
 import { BoardSide } from "../types/match";
+import { TileStatus } from "../types/match";
 
 const colName = (col: number) => {
     return String.fromCharCode(97 + col);
@@ -115,31 +116,29 @@ export const getMoves = (board, position, side) => {
 
     const moves = [];
 
-    console.log({position})
-
     if (piece === "P") {
         if (side === BoardSide.WHITE) {
             if (checkBounds([r - 1, c + 1]) && board[r - 1][c + 1][0] === "b") {
                 moves.push({
                     pos: [r - 1, c + 1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
             if (checkBounds([r - 1, c - 1]) && board[r - 1][c - 1][0] === "b") {
                 moves.push({
                     pos: [r - 1, c - 1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
             if (checkBounds([r - 1, c]) && board[r - 1][c] === "") {
                 moves.push({
                     pos: [r - 1, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
                 if (r === 6 && checkBounds([r - 2, c]) && board[r - 2][c] === "") {
                     moves.push({
                         pos: [r - 2, c],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 }
             }
@@ -148,72 +147,72 @@ export const getMoves = (board, position, side) => {
             if (checkBounds([r + 1, c + 1]) && board[r + 1][c + 1][0] === "w") {
                 moves.push({
                     pos: [r + 1, c + 1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
             if (checkBounds([r + 1, c - 1]) && board[r + 1][c - 1][0] === "w") {
                 moves.push({
                     pos: [r + 1, c - 1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
             if (checkBounds([r + 1, c]) && board[r + 1][c] === "") {
                 moves.push({
                     pos: [r + 1, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
                 if (r === 1 && checkBounds([r + 2, c]) && board[r + 2][c] === "") {
                     moves.push({
                         pos: [r + 2, c],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 }
             }
         }
 
         //en passant
-        if (side === BoardSide.WHITE && r === 3) {
-            if (checkBounds([r, c + 1]) && board[r][c + 1] === "bP") {
-                moves.push({
-                    pos: [r - 1, c + 1],
-                    type: "enpassant",
-                });
-            }
-            if (checkBounds([r, c - 1]) && board[r][c - 1] === "bP") {
-                moves.push({
-                    pos: [r - 1, c - 1],
-                    type: "enpassant",
-                });
-            }
-        }
-        if (side === BoardSide.BLACK && r === 4) {
-            if (checkBounds([r, c + 1]) && board[r][c + 1] === "wP") {
-                moves.push({
-                    pos: [r + 1, c + 1],
-                    type: "enpassant",
-                });
-            }
-            if (checkBounds([r, c - 1]) && board[r][c - 1] === "wP") {
-                moves.push({
-                    pos: [r + 1, c - 1],
-                    type: "enpassant",
-                });
-            }
-        }
+        // if (side === BoardSide.WHITE && r === 3) {
+        //     if (checkBounds([r, c + 1]) && board[r][c + 1] === "bP") {
+        //         moves.push({
+        //             pos: [r - 1, c + 1],
+        //             type: "enpassant",
+        //         });
+        //     }
+        //     if (checkBounds([r, c - 1]) && board[r][c - 1] === "bP") {
+        //         moves.push({
+        //             pos: [r - 1, c - 1],
+        //             type: "enpassant",
+        //         });
+        //     }
+        // }
+        // if (side === BoardSide.BLACK && r === 4) {
+        //     if (checkBounds([r, c + 1]) && board[r][c + 1] === "wP") {
+        //         moves.push({
+        //             pos: [r + 1, c + 1],
+        //             type: "enpassant",
+        //         });
+        //     }
+        //     if (checkBounds([r, c - 1]) && board[r][c - 1] === "wP") {
+        //         moves.push({
+        //             pos: [r + 1, c - 1],
+        //             type: "enpassant",
+        //         });
+        //     }
+        // }
     }
 
     if (piece === "R") {
-        var i: number;
+        let i: number;
         for (i=r+1; i<8; i++) {
             if (board[i][c] === "") {
                 moves.push({
                     pos: [i, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[i][c][0] !== side[0]) {
                 moves.push({
                     pos: [i, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -224,12 +223,12 @@ export const getMoves = (board, position, side) => {
             if (board[i][c] === "") {
                 moves.push({
                     pos: [i, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[i][c][0] !== side[0]) {
                 moves.push({
                     pos: [i, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -240,12 +239,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][i] === "") {
                 moves.push({
                     pos: [r, i],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][i][0] !== side[0]) {
                 moves.push({
                     pos: [r, i],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -256,12 +255,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][i] === "") {
                 moves.push({
                     pos: [r, i],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][i][0] !== side[0]) {
                 moves.push({
                     pos: [r, i],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -271,18 +270,18 @@ export const getMoves = (board, position, side) => {
     }
 
     if (piece === "B") {
-        var i: number;
+        let i: number;
         for (i=1; i<8; i++) {
             if (checkBounds([r+i, c+i])) {
                 if (board[r+i][c+i] === "") {
                     moves.push({
                         pos: [r+i, c+i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r+i][c+i][0] !== side[0]) {
                     moves.push({
                         pos: [r+i, c+i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -295,12 +294,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r-i][c-i] === "") {
                     moves.push({
                         pos: [r-i, c-i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r-i][c-i][0] !== side[0]) {
                     moves.push({
                         pos: [r-i, c-i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -313,12 +312,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r+i][c-i] === "") {
                     moves.push({
                         pos: [r+i, c-i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r+i][c-i][0] !== side[0]) {
                     moves.push({
                         pos: [r+i, c-i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -331,12 +330,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r-i][c+i] === "") {
                     moves.push({
                         pos: [r-i, c+i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r-i][c+i][0] !== side[0]) {
                     moves.push({
                         pos: [r-i, c+i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -347,17 +346,17 @@ export const getMoves = (board, position, side) => {
     }
 
     if (piece === "Q") {
-        var i: number;
+        let i: number;
         for (i=r+1; i<8; i++) {
             if (board[i][c] === "") {
                 moves.push({
                     pos: [i, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[i][c][0] !== side[0]) {
                 moves.push({
                     pos: [i, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -368,12 +367,12 @@ export const getMoves = (board, position, side) => {
             if (board[i][c] === "") {
                 moves.push({
                     pos: [i, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[i][c][0] !== side[0]) {
                 moves.push({
                     pos: [i, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -384,12 +383,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][i] === "") {
                 moves.push({
                     pos: [r, i],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][i][0] !== side[0]) {
                 moves.push({
                     pos: [r, i],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -400,12 +399,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][i] === "") {
                 moves.push({
                     pos: [r, i],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][i][0] !== side[0]) {
                 moves.push({
                     pos: [r, i],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
                 break;
             } else {
@@ -417,12 +416,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r+i][c+i] === "") {
                     moves.push({
                         pos: [r+i, c+i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r+i][c+i][0] !== side[0]) {
                     moves.push({
                         pos: [r+i, c+i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -435,12 +434,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r-i][c-i] === "") {
                     moves.push({
                         pos: [r-i, c-i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r-i][c-i][0] !== side[0]) {
                     moves.push({
                         pos: [r-i, c-i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -453,12 +452,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r+i][c-i] === "") {
                     moves.push({
                         pos: [r+i, c-i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r+i][c-i][0] !== side[0]) {
                     moves.push({
                         pos: [r+i, c-i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -471,12 +470,12 @@ export const getMoves = (board, position, side) => {
                 if (board[r-i][c+i] === "") {
                     moves.push({
                         pos: [r-i, c+i],
-                        type: "move",
+                        type: TileStatus.MOVE,
                     });
                 } else if (board[r-i][c+i][0] !== side[0]) {
                     moves.push({
                         pos: [r-i, c+i],
-                        type: "kill",
+                        type: TileStatus.CAPTURE,
                     });
                     break;
                 } else {
@@ -491,12 +490,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+1][c+1] === "") {
                 moves.push({
                     pos: [r+1, c+1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+1][c+1][0] !== side[0]) {
                 moves.push({
                     pos: [r+1, c+1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -504,12 +503,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+1][c] === "") {
                 moves.push({
                     pos: [r+1, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+1][c][0] !== side[0]) {
                 moves.push({
                     pos: [r+1, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -517,12 +516,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+1][c-1] === "") {
                 moves.push({
                     pos: [r+1, c-1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+1][c-1][0] !== side[0]) {
                 moves.push({
                     pos: [r+1, c-1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -530,12 +529,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][c+1] === "") {
                 moves.push({
                     pos: [r, c+1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][c+1][0] !== side[0]) {
                 moves.push({
                     pos: [r, c+1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -543,12 +542,12 @@ export const getMoves = (board, position, side) => {
             if (board[r][c-1] === "") {
                 moves.push({
                     pos: [r, c-1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r][c-1][0] !== side[0]) {
                 moves.push({
                     pos: [r, c-1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -556,12 +555,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-1][c+1] === "") {
                 moves.push({
                     pos: [r-1, c+1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-1][c+1][0] !== side[0]) {
                 moves.push({
                     pos: [r-1, c+1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -569,12 +568,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-1][c] === "") {
                 moves.push({
                     pos: [r-1, c],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-1][c][0] !== side[0]) {
                 moves.push({
                     pos: [r-1, c],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -582,12 +581,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-1][c-1] === "") {
                 moves.push({
                     pos: [r-1, c-1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-1][c-1][0] !== side[0]) {
                 moves.push({
                     pos: [r-1, c-1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -597,13 +596,13 @@ export const getMoves = (board, position, side) => {
             if (board[7][5] === "" && board[7][6] === "" && board[7][7] === "wR") {
                 moves.push({
                     pos: [7, 6],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             }
             if (board[7][3] === "" && board[7][2] === "" && board[7][1] === "" && board[7][0] === "wR") {
                 moves.push({
                     pos: [7, 2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             }
         }
@@ -611,13 +610,13 @@ export const getMoves = (board, position, side) => {
             if (board[0][5] === "" && board[0][6] === "" && board[0][7] === "bR") {
                 moves.push({
                     pos: [0, 6],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             }
             if (board[0][3] === "" && board[0][2] === "" && board[0][1] === "" && board[0][0] === "bR") {
                 moves.push({
                     pos: [0, 2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             }
         }
@@ -628,12 +627,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+2][c+1] === "") {   
                 moves.push({
                     pos: [r+2, c+1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+2][c+1][0] !== side[0]) {
                 moves.push({
                     pos: [r+2, c+1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -641,12 +640,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+2][c-1] === "") {
                 moves.push({
                     pos: [r+2, c-1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+2][c-1][0] !== side[0]) {
                 moves.push({
                     pos: [r+2, c-1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -654,12 +653,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-2][c+1] === "") {
                 moves.push({
                     pos: [r-2, c+1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-2][c+1][0] !== side[0]) {
                 moves.push({
                     pos: [r-2, c+1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -667,12 +666,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-2][c-1] === "") {
                 moves.push({
                     pos: [r-2, c-1],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-2][c-1][0] !== side[0]) {
                 moves.push({
                     pos: [r-2, c-1],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -680,12 +679,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+1][c+2] === "") {
                 moves.push({
                     pos: [r+1, c+2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+1][c+2][0] !== side[0]) {
                 moves.push({
                     pos: [r+1, c+2],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -693,12 +692,12 @@ export const getMoves = (board, position, side) => {
             if (board[r+1][c-2] === "") {
                 moves.push({
                     pos: [r+1, c-2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r+1][c-2][0] !== side[0]) {
                 moves.push({
                     pos: [r+1, c-2],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -706,12 +705,12 @@ export const getMoves = (board, position, side) => {
             if (board[r-1][c+2] === "") {
                 moves.push({
                     pos: [r-1, c+2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-1][c+2][0] !== side[0]) {
                 moves.push({
                     pos: [r-1, c+2],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
@@ -719,17 +718,16 @@ export const getMoves = (board, position, side) => {
             if (board[r-1][c-2] === "") {
                 moves.push({
                     pos: [r-1, c-2],
-                    type: "move",
+                    type: TileStatus.MOVE,
                 });
             } else if (board[r-1][c-2][0] !== side[0]) {
                 moves.push({
                     pos: [r-1, c-2],
-                    type: "kill",
+                    type: TileStatus.CAPTURE,
                 });
             }
         }
     }
 
-    console.log({ moves });
     return moves;
 };

@@ -21,6 +21,7 @@ export default function Home(props: {
   useEffect(() => {
     socket.on("connect", async () => {
       console.log("Connected to server");
+      console.log(matchId);
       if (matchId) {
         try {
           const response = await joinMatch(matchId);
@@ -50,7 +51,6 @@ export default function Home(props: {
     });
 
     socket.on("move", (data: any) => {
-      console.log("Move", data);
       const from = data.initialPosition;
       const to = data.finalPosition;
       setBoard((value) => {
@@ -66,11 +66,9 @@ export default function Home(props: {
     createMatch()
       .then((response) => {
         if (response.status === 200) {
-          // setMatchId(response.data.matchId);
-          // setMatchStatus(MatchStatus.WAITING);
-          // socket.emit("join", response.data.matchId);
-          console.log(response.data);
+          setMatchStatus(MatchStatus.IN_PROGRESS);
           setMatchId(response.data.matchId);
+          socket.emit("join", response.data.matchId);
           navigate(`/?id=${response.data.matchId}`);
         } else {
           console.log("Error creating match");
@@ -83,20 +81,12 @@ export default function Home(props: {
 
   const handleMove = (move: Move) => {
     socket.emit("move", { move, matchId });
-    // const from = move.initialPosition;
-    // const to = move.finalPosition;
-    // setBoard((value) => {
-    //   const temp = JSON.parse(JSON.stringify(value));
-    //   temp[to[0]][to[1]] = temp[from[0]][from[1]];
-    //   temp[from[0]][from[1]] = "";
-    //   return temp;
-    // })
   };
 
   return (
     <div>
-      <div className="flex flex-col h-screen xl:flex-row w-full">
-        <div className="xl:flex-row w-full flex align-center">
+      <div className="flex flex-col min-h-screen xl:flex-row w-full">
+        <div className="xl:flex-row w-full flex items-center">
           <Board
             board={board}
             side={side}

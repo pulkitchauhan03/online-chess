@@ -25,7 +25,7 @@ export default function Board({
   board: string[][];
   side: BoardSide;
 }) {
-  const [highlightedTiles , setHighlightedTiles] =
+  const [highlightedTiles, setHighlightedTiles] =
     useState<TileStatus[][]>(unselectedTileArray);
   const [selectedTile, setSelectedTile] = useState<number[] | null>(null);
 
@@ -50,13 +50,12 @@ export default function Board({
         )}
         {selectedStatus !== TileStatus.NONE && (
           <div
-            className={`absolute w-full h-full outline pointer-events-none outline-offset-[-15px] outline-[7px] opacity-20 ${
-              selectedStatus === TileStatus.SELECTED
-                ? "outline-red-900"
-                : selectedStatus === TileStatus.MOVE
+            className={`absolute w-full h-full outline pointer-events-none outline-offset-[-15px] outline-[7px] opacity-20 ${selectedStatus === TileStatus.SELECTED
+              ? "outline-red-900"
+              : selectedStatus === TileStatus.MOVE
                 ? "outline-green-900"
                 : "outline-blue-900"
-            }`}
+              }`}
           ></div>
         )}
       </>
@@ -102,37 +101,43 @@ export default function Board({
       handleMove(move);
     }
   };
+  console.log(status)
 
   return (
-    <div className="w-full flex justify-center items-center select-none">
-      <div className="grid grid-cols-8 gap-0 aspect-square max-h-[48rem] max-w-3xl w-full">
-        {board.map((row: string[], rowIndex: number) => {
-          return row.map((cell: string, cellIndex: number) => {
-            const row = side === BoardSide.WHITE ? rowIndex : 7 - rowIndex;
-            const col = side === BoardSide.WHITE ? cellIndex : 7 - cellIndex;
-            return (
-              <div
-                id={`tile-(${row},${col})`}
-                key={row * 8 + col}
-                onClick={handleClick}
-                className={`${cell} flex justify-center items-center w-full aspect-square relative 
+    <div className="w-full select-none">
+      <div className="w-full h-full max-w-3xl aspect-square max-h-[48rem] mx-auto my-auto relative">
+        <div className="grid grid-cols-8 gap-0 w-full absolute z-10">
+          {board.map((row: string[], rowIndex: number) => {
+            return row.map((cell: string, cellIndex: number) => {
+              const row = side === BoardSide.WHITE ? rowIndex : 7 - rowIndex;
+              const col = side === BoardSide.WHITE ? cellIndex : 7 - cellIndex;
+              return (
+                <div
+                  id={`tile-(${row},${col})`}
+                  key={row * 8 + col}
+                  onClick={handleClick}
+                  className={`${cell} flex justify-center items-center w-full aspect-square relative 
               ${(row + col) % 2 === 0 ? "bg-white" : "bg-gray-600"}`}
-              >
-                {renderCell({ row, col })}
-                {/* {rowIndex === 7 && (
+                >
+                  {renderCell({ row, col })}
+                  {/* {rowIndex === 7 && (
                   <div className="w-8 h-8 pointer-events-none absolute z-10">
                     {String.fromCharCode(97 + rowIndex)}
-                  </div>
+                    </div>
                 )}
                 {cellIndex === 0 && (
                   <div className="w-8 h-8 pointer-events-none absolute z-10">
                     {8 - col}
                   </div>
                 )} */}
-              </div>
-            );
-          });
-        })}
+                </div>
+              );
+            });
+          })}
+        </div>
+        <div className={`w-full h-full bg-black opacity-40 ${status !== MatchStatus.IN_PROGRESS ? "z-20" : "z-0"} absolute user-select-none flex justify-center items-center`}>
+          <div className={`text-white w-48 text-center bg-red-600 opacity-100 ${status !== MatchStatus.IN_PROGRESS ? "z-30" : "z-0"} leading-10`}>Match Inactive</div>
+        </div>
       </div>
     </div>
   );
